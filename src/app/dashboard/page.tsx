@@ -61,7 +61,8 @@ export default function Home() {
     setIsLoading(true); // Start loading
     try {
       const result = await generateProductDisplay({
-        productImage: carouselImages[0] || 'https://picsum.photos/400/300', // default image
+        carouselImages,
+        products,
         primaryColor,
         secondaryColor,
         font,
@@ -211,3 +212,4 @@ export default function Home() {
     </div>
   );
 }
+
