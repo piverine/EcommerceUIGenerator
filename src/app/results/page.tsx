@@ -32,7 +32,7 @@ export default function ResultsPage() {
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4">
       {/* Code Display Section */}
-      <div className="w-full md:w-1/3 flex flex-col gap-4">
+      <div className="w-full md:w-1/2 flex flex-col gap-4">
         <Card>
           <CardHeader>
             <CardTitle>Generated HTML</CardTitle>
@@ -67,7 +67,7 @@ export default function ResultsPage() {
       </div>
 
       {/* Live Preview Section */}
-      <div className="w-full md:w-1/3 flex flex-col gap-4">
+      <div className="w-full md:w-1/2 flex flex-col gap-4">
         <Card>
           <CardHeader>
             <CardTitle>Live Preview</CardTitle>
@@ -77,7 +77,7 @@ export default function ResultsPage() {
             <iframe
               srcDoc={livePreview}
               title="Live Preview"
-              className="w-full h-[400px] border rounded"
+              className="w-full h-[600px] border rounded"
             />
           </CardContent>
         </Card>
@@ -85,3 +85,4 @@ export default function ResultsPage() {
     </div>
   );
 }
+
