@@ -58,6 +58,8 @@ const DashboardPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const {toast} = useToast();
   const router = useRouter();
+  const [primaryColor, setPrimaryColor] = useState('#000000');
+  const [secondaryColor, setSecondaryColor] = useState('#533b54');
 
   // State for managing carousel images
   const [carouselImages, setCarouselImages] = useState<CarouselImage[]>([{url: 'https://picsum.photos/400/300'}]);
@@ -84,8 +86,6 @@ const DashboardPage = () => {
           image: 'https://picsum.photos/200/150',
         },
       ],
-      primaryColor: '#000000',
-      secondaryColor: '#533b54',
       font: 'Arial',
       textPrompt: 'Create an awesome homepage for ecommerce website with animation and cool gradient',
     },
@@ -94,51 +94,52 @@ const DashboardPage = () => {
   const {handleSubmit} = form;
 
   // Add carousel image
-  const addCarouselImage = () => {
-    setCarouselImages([...carouselImages, {url: ''}]);
-  };
+   const addCarouselImage = () => {
+     setCarouselImages([...carouselImages, {url: 'https://picsum.photos/400/300'}]);
+   };
 
-  // Remove carousel image
-  const removeCarouselImage = (index: number) => {
-    const newImages = [...carouselImages];
-    newImages.splice(index, 1);
-    setCarouselImages(newImages);
-  };
+   // Remove carousel image
+   const removeCarouselImage = (index: number) => {
+     const newImages = [...carouselImages];
+     newImages.splice(index, 1);
+     setCarouselImages(newImages);
+   };
 
-  // Update carousel image URL
-  const updateCarouselImageURL = (index: number, url: string) => {
-    const newImages = [...carouselImages];
-    newImages[index] = {url};
-    setCarouselImages(newImages);
-  };
+   // Update carousel image URL
+   const updateCarouselImageURL = (index: number, url: string) => {
+     const newImages = [...carouselImages];
+     newImages[index] = { url };
+     setCarouselImages(newImages);
+   };
 
-  // Add product
-  const addProduct = () => {
-    setProducts([
-      ...products,
-      {
-        title: '',
-        price: '',
-        description: '',
-        image: '',
-      },
-    ]);
-  };
+   // Add product
+   const addProduct = () => {
+     setProducts([
+       ...products,
+       {
+         title: '',
+         price: '',
+         description: '',
+         image: '',
+       },
+     ]);
+   };
 
-  // Remove product
-  const removeProduct = (index: number) => {
-    const newProducts = [...products];
-    newProducts.splice(index, 1);
-    setProducts(newProducts);
-  };
+   // Remove product
+   const removeProduct = (index: number) => {
+     const newProducts = [...products];
+     newProducts.splice(index, 1);
+     setProducts(newProducts);
+   };
 
-  // Update product details
-  const updateProductDetails = (index: number, field: string, value: string) => {
-    const newProducts = [...products];
-    // Typescript being weird, had to add any
-    newProducts[index] = {...newProducts[index], [field]: value} as any;
-    setProducts(newProducts);
-  };
+   // Update product details
+   const updateProductDetails = (index: number, field: string, value: string) => {
+     const newProducts = [...products];
+     // Typescript being weird, had to add any
+     newProducts[index] = { ...newProducts[index], [field]: value } as any;
+     setProducts(newProducts);
+   };
+
 
   const handleGenerateCode = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true); // Start loading
@@ -180,7 +181,7 @@ const DashboardPage = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={handleSubmit(handleGenerateCode)} className="space-y-4">
+            <form onSubmit={handleSubmit(form.handleSubmit(handleGenerateCode))} className="space-y-4">
               <div>
                 <Label>Carousel Images</Label>
                 {carouselImages.map((image, index) => (
@@ -257,7 +258,6 @@ const DashboardPage = () => {
                             <FormControl>
                               <Input
                                 placeholder="Product Price"
-                                {...field}
                                 {...field}
                                 value={product.price}
                                 onChange={(e) => {
@@ -339,7 +339,10 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Primary Color</FormLabel>
                     <FormControl>
-                      <Input type="color" defaultValue="#000000" {...field} />
+                      <Input type="color" {...field} value={primaryColor} onChange={(e) => {
+                        setPrimaryColor(e.target.value);
+                        field.onChange(e);
+                      }} />
                     </FormControl>
                     <FormDescription>
                       Enter the primary color code for the brand.
@@ -347,7 +350,7 @@ const DashboardPage = () => {
                   </FormItem>
                 )}
               />
-
+ 
               <FormField
                 control={form.control}
                 name="secondaryColor"
@@ -355,7 +358,10 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Secondary Color</FormLabel>
                     <FormControl>
-                      <Input type="color" defaultValue="#533b54" {...field} />
+                      <Input type="color" {...field} value={secondaryColor} onChange={(e) => {
+                         setSecondaryColor(e.target.value);
+                         field.onChange(e);
+                      }} />
                     </FormControl>
                     <FormDescription>
                       Enter the secondary color code for the brand.
