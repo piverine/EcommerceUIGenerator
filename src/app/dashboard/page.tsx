@@ -377,7 +377,7 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Font</FormLabel>
                     <FormControl>
-                      <Input placeholder="Font Name" defaultValue="Arial" {...field} />
+                      <Input placeholder="Font Name" {...field}  value={field.value}/>
                     </FormControl>
                     <FormDescription>
                       Enter the font name to be used in the display section.
