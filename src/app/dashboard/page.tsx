@@ -13,6 +13,8 @@ import {generateProductDisplay} from '@/ai/flows/generate-product-display';
 import {useToast} from '@/hooks/use-toast';
 import {useRouter} from 'next/navigation';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
+import {useRef} from 'react';
+import {Skeleton} from "@/components/ui/skeleton";
 
 // Define the CarouselImage schema
 const CarouselImageSchema = z.object({
@@ -86,10 +88,13 @@ const DashboardPage = () => {
           image: 'https://picsum.photos/200/150',
         },
       ],
+      primaryColor: '#000000',
+      secondaryColor: '#533b54',
       font: 'Arial',
       textPrompt: 'Create an awesome homepage for ecommerce website with animation and cool gradient',
     },
   });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {handleSubmit} = form;
 
@@ -152,7 +157,6 @@ const DashboardPage = () => {
         font: values.font,
         textPrompt: values.textPrompt,
       });
-      console.log('Generated code:', result);
 
       router.push(
         `/results?html=${encodeURIComponent(result.html)}&css=${encodeURIComponent(
@@ -181,7 +185,7 @@ const DashboardPage = () => {
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={handleSubmit(form.handleSubmit(handleGenerateCode))} className="space-y-4">
+            <form onSubmit={form.handleSubmit(handleGenerateCode)} className="space-y-4">
               <div>
                 <Label>Carousel Images</Label>
                 {carouselImages.map((image, index) => (
@@ -196,7 +200,6 @@ const DashboardPage = () => {
                               type="url"
                               placeholder="Carousel Image URL"
                               {...field}
-                              value={image.url}
                               onChange={(e) => {
                                 updateCarouselImageURL(index, e.target.value);
                                 field.onChange(e); // Notify formik
@@ -235,7 +238,6 @@ const DashboardPage = () => {
                               <Input
                                 placeholder="Product Title"
                                 {...field}
-                                value={product.title}
                                 onChange={(e) => {
                                   updateProductDetails(index, 'title', e.target.value);
                                   field.onChange(e); // Notify formik
@@ -259,7 +261,6 @@ const DashboardPage = () => {
                               <Input
                                 placeholder="Product Price"
                                 {...field}
-                                value={product.price}
                                 onChange={(e) => {
                                   updateProductDetails(index, 'price', e.target.value);
                                   field.onChange(e); // Notify formik
@@ -282,8 +283,7 @@ const DashboardPage = () => {
                             <FormControl>
                               <Textarea
                                 placeholder="Product Description"
-                                {...field}
-                                value={product.description}
+                                ref={textareaRef}
                                 onChange={(e) => {
                                   updateProductDetails(index, 'description', e.target.value);
                                   field.onChange(e); // Notify formik
@@ -307,8 +307,6 @@ const DashboardPage = () => {
                               <Input
                                 type="url"
                                 placeholder="Product Image URL"
-                                {...field}
-                                value={product.image}
                                 onChange={(e) => {
                                   updateProductDetails(index, 'image', e.target.value);
                                   field.onChange(e); // Notify formik
@@ -339,7 +337,7 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Primary Color</FormLabel>
                     <FormControl>
-                      <Input type="color" {...field} value={primaryColor} onChange={(e) => {
+                      <Input type="color" {...field} onChange={(e) => {
                         setPrimaryColor(e.target.value);
                         field.onChange(e);
                       }} />
@@ -358,7 +356,7 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Secondary Color</FormLabel>
                     <FormControl>
-                      <Input type="color" {...field} value={secondaryColor} onChange={(e) => {
+                      <Input type="color" {...field} onChange={(e) => {
                          setSecondaryColor(e.target.value);
                          field.onChange(e);
                       }} />
@@ -377,7 +375,7 @@ const DashboardPage = () => {
                   <FormItem>
                     <FormLabel>Font</FormLabel>
                     <FormControl>
-                      <Input placeholder="Font Name" {...field}  value={field.value}/>
+                      <Input placeholder="Font Name" {...field} />
                     </FormControl>
                     <FormDescription>
                       Enter the font name to be used in the display section.
