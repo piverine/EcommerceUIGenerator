@@ -4,7 +4,7 @@
  *
  * - generateProductDisplay - A function that handles the product display generation process.
  * - GenerateProductDisplayInput - The input type for the generateProductDisplay function.
- * - GenerateProductDisplayOutput - The return type for the generateProductDisplay function.
+ * - GenerateProductDisplayOutput - The return type for the GenerateProductDisplay function.
  */
 
 import {ai} from '@/ai/ai-instance';
@@ -64,7 +64,13 @@ Goal: Generate HTML and CSS code for a product display section.
 
 Inputs:
 1. Carousel Images: {{{carouselImages}}}
-2. Product Details: {{{products}}}
+2. Product Details:
+{{#each products}}
+  - Title: {{{this.title}}}
+    Price: {{{this.price}}}
+    Description: {{{this.description}}}
+    Image: {{{this.image}}}
+{{/each}}
 3. Brand Guidelines:
    - Primary Color: {{{primaryColor}}}
    - Secondary Color: {{{secondaryColor}}}
@@ -96,4 +102,3 @@ const generateProductDisplayFlow = ai.defineFlow<
     return output!;
   }
 );
-
