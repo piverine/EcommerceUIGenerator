@@ -1,16 +1,29 @@
 'use client';
 
-import {useSearchParams} from 'next/navigation';
+import {useEffect, useState} from 'react';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {Textarea} from '@/components/ui/textarea';
 
+function getParam(param: string) {
+  if (typeof window === 'undefined') return '';
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param) || '';
+}
+
 export default function ResultsPage() {
-  const searchParams = useSearchParams();
-  const html = searchParams.get('html') || '';
-  const css = searchParams.get('css') || '';
-  const font = searchParams.get('font') || 'Arial';
-  const primaryColor = searchParams.get('primaryColor') || '#000000';
-  const javascript = searchParams.get('javascript') || '';
+  const [html, setHtml] = useState('');
+  const [css, setCss] = useState('');
+  const [font, setFont] = useState('Arial');
+  const [primaryColor, setPrimaryColor] = useState('#000000');
+  const [javascript, setJavascript] = useState('');
+
+  useEffect(() => {
+    setHtml(getParam('html'));
+    setCss(getParam('css'));
+    setFont(getParam('font') || 'Arial');
+    setPrimaryColor(getParam('primaryColor') || '#000000');
+    setJavascript(getParam('javascript'));
+  }, []);
 
   const livePreview = `
     <html>
@@ -31,7 +44,6 @@ export default function ResultsPage() {
 
   return (
     <div className="container mx-auto p-4 flex flex-col md:flex-row gap-4">
-      {/* Code Display Section */}
       <div className="w-full md:w-1/2 flex flex-col gap-4">
         <Card>
           <CardHeader>
@@ -66,7 +78,6 @@ export default function ResultsPage() {
         )}
       </div>
 
-      {/* Live Preview Section */}
       <div className="w-full md:w-1/2 flex flex-col gap-4">
         <Card>
           <CardHeader>
@@ -85,4 +96,3 @@ export default function ResultsPage() {
     </div>
   );
 }
-
