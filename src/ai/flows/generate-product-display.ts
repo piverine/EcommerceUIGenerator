@@ -3,7 +3,7 @@
  * @fileOverview Generates HTML and CSS code for a product display section based on a product image, brand colors, font, and text prompt.
  *
  * - generateProductDisplay - A function that handles the product display generation process.
- * - GenerateProductDisplayInput - The input type for the generateProductDisplay function.
+ * - GenerateProductDisplayInput - The input type for the GenerateProductDisplay function.
  * - GenerateProductDisplayOutput - The return type for the GenerateProductDisplay function.
  */
 
@@ -28,6 +28,7 @@ export type GenerateProductDisplayInput = z.infer<typeof GenerateProductDisplayI
 const GenerateProductDisplayOutputSchema = z.object({
   html: z.string().describe('The generated HTML code for the product display section.'),
   css: z.string().describe('The generated CSS code for the product display section.'),
+  javascript: z.string().optional().describe('The generated Javascript code for the product display section'),
 });
 export type GenerateProductDisplayOutput = z.infer<typeof GenerateProductDisplayOutputSchema>;
 
@@ -56,11 +57,24 @@ const prompt = ai.definePrompt({
     schema: z.object({
       html: z.string().describe('The generated HTML code for the product display section.'),
       css: z.string().describe('The generated CSS code for the product display section.'),
+      javascript: z.string().optional().describe('The generated Javascript code for the product display section'),
     }),
   },
   prompt: `You are an expert frontend developer tasked with creating UI components.
 
-Goal: Generate HTML and CSS code for a product display section.
+Goal: Generate HTML, CSS, and Javascript code for a visually stunning and modern product display section.
+
+Instructions:
+1.  Use modern CSS techniques like Flexbox and Grid.
+2.  Incorporate a visually appealing color scheme using the provided primary and secondary brand colors.
+3.  Use the provided font for a consistent and professional look.
+4.  Incorporate modern UI/UX elements such as:
+    *   Subtle animations and transitions to enhance user experience.
+    *   Gradients and layered elements to add depth.
+    *   A glassmorph effect for a frosted glass appearance (optional).
+5.  Ensure the layout is responsive and adapts well to different screen sizes.
+6.  Include JavaScript for interactive elements, such as carousel functionality, hover effects, or any other dynamic behavior that enhances the user experience.
+7.  Make sure to display carousel images and all product details that were provided
 
 Inputs:
 1. Carousel Images: {{{carouselImages}}}
@@ -77,14 +91,14 @@ Inputs:
    - Primary Font: '{{{font}}}'
 4. Description: {{{textPrompt}}}
 
-Instructions:
-Based on the provided carousel images and product details, generate a visually appealing and modern product display section. Use the brand colors and font to maintain consistency. The display should showcase the products effectively, with clear titles, prices, descriptions, and images.
-
-Output only the HTML structure and the corresponding CSS rules within <style> tags or as separate blocks. Do not include any explanations, just the code. The output should be well-formatted and readable.
+Output:
+Provide the HTML structure, CSS rules (including any animations or gradients), and JavaScript code for the product display section. Ensure the code is well-formatted and readable.
 
 HTML:
 
 CSS:
+
+Javascript:
 `,
 });
 

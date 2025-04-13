@@ -10,6 +10,7 @@ export default function ResultsPage() {
   const css = searchParams.get('css') || '';
   const font = searchParams.get('font') || 'Arial';
   const primaryColor = searchParams.get('primaryColor') || '#000000';
+  const javascript = searchParams.get('javascript') || '';
 
   const livePreview = `
     <html>
@@ -21,6 +22,9 @@ export default function ResultsPage() {
       </head>
       <body>
         ${html}
+        <script>
+          ${javascript}
+        </script>
       </body>
     </html>
   `;
@@ -48,6 +52,18 @@ export default function ResultsPage() {
             <Textarea readOnly value={css} className="min-h-[200px]" />
           </CardContent>
         </Card>
+
+        {javascript && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Generated JavaScript</CardTitle>
+              <CardDescription>Review the generated JavaScript code</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea readOnly value={javascript} className="min-h-[200px]" />
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Live Preview Section */}
