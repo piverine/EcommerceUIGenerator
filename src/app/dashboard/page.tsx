@@ -7,7 +7,8 @@ import {Input} from '@/components/ui/input';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
 import {generateProductDisplay} from '@/ai/flows/generate-product-display';
 import {refinePrompt} from '@/ai/flows/refine-prompt';
-import {UserButton, useUser} from '@clerk/nextjs';
+import {useRouter} from 'next/navigation';
+import {Loader2} from 'lucide-react';
 
 export default function Home() {
   const [productImage, setProductImage] = useState<string>('');
@@ -15,12 +16,12 @@ export default function Home() {
   const [secondaryColor, setSecondaryColor] = useState<string>('#E5E5E5');
   const [font, setFont] = useState<string>('Arial');
   const [textPrompt, setTextPrompt] = useState<string>('Generate a clean product display section');
-  const [generatedHTML, setGeneratedHTML] = useState<string>('');
-  const [generatedCSS, setGeneratedCSS] = useState<string>('');
-  const [livePreview, setLivePreview] = useState<string>('');
   const [refinedPrompt, setRefinedPrompt] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const router = useRouter();
 
   const handleGenerateCode = async () => {
+    setIsLoading(true); // Start loading
     try {
       const result = await generateProductDisplay({
         productImage: productImage || 'https://picsum.photos/400/300', // default image
@@ -29,23 +30,18 @@ export default function Home() {
         font,
         textPrompt,
       });
-      setGeneratedHTML(result.html);
-      setGeneratedCSS(result.css);
-      setLivePreview(`
-        <html>
-          <head>
-            <style>
-              body { font-family: ${font}; color: ${primaryColor}; }
-              ${result.css}
-            </style>
-          </head>
-          <body>
-            ${result.html}
-          </body>
-        </html>
-      `);
+
+      // Navigate to the results page with the generated code
+      router.push(
+        `/results?html=${encodeURIComponent(result.html)}&css=${encodeURIComponent(
+          result.css
+        )}&font=${encodeURIComponent(font)}&primaryColor=${encodeURIComponent(primaryColor)}`
+      );
     } catch (error) {
       console.error('Code generation failed', error);
+      // Handle error appropriately, maybe show an error message to the user
+    } finally {
+      setIsLoading(false); // End loading
     }
   };
 
@@ -115,49 +111,20 @@ export default function Home() {
                 onChange={(e) => setTextPrompt(e.target.value)}
               />
             </div>
-            <Button onClick={handleGenerateCode}>Generate Code</Button>
-            <Button variant="secondary" onClick={handleRefinePrompt}>Refine Prompt</Button>
+            <Button disabled={isLoading} onClick={handleGenerateCode}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate Code'
+              )}
+            </Button>
+            <Button variant="secondary" onClick={handleRefinePrompt}>
+              Refine Prompt
+            </Button>
             {refinedPrompt && <p>Refined Prompt: {refinedPrompt}</p>}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Code Display Section */}
-      <div className="w-full md:w-1/3 flex flex-col gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Generated HTML</CardTitle>
-            <CardDescription>Review the generated HTML code</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea readOnly value={generatedHTML} className="min-h-[200px]" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Generated CSS</CardTitle>
-            <CardDescription>Review the generated CSS code</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea readOnly value={generatedCSS} className="min-h-[200px]" />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Live Preview Section */}
-      <div className="w-full md:w-1/3 flex flex-col gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Live Preview</CardTitle>
-            <CardDescription>See the generated code in action</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <iframe
-              srcDoc={livePreview}
-              title="Live Preview"
-              className="w-full h-[400px] border rounded"
-            />
           </CardContent>
         </Card>
       </div>
