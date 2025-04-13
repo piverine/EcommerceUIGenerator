@@ -11,20 +11,57 @@ import {useRouter} from 'next/navigation';
 import {Loader2} from 'lucide-react';
 
 export default function Home() {
-  const [productImage, setProductImage] = useState<string>('');
+  const router = useRouter();
+
+  // Hero Section Carousel State
+  const [carouselImages, setCarouselImages] = useState<string[]>(['https://picsum.photos/400/300']);
+  const addCarouselImage = () => setCarouselImages([...carouselImages, 'https://picsum.photos/400/300']);
+  const updateCarouselImage = (index: number, value: string) => {
+    const newImages = [...carouselImages];
+    newImages[index] = value;
+    setCarouselImages(newImages);
+  };
+
+  // Product List State
+  const [products, setProducts] = useState<
+    {
+      title: string;
+      price: string;
+      description: string;
+      image: string;
+    }[]
+  >([
+    {
+      title: 'Product Title',
+      price: '99.99',
+      description: 'Product description goes here.',
+      image: 'https://picsum.photos/200/150',
+    },
+  ]);
+  const addProduct = () =>
+    setProducts([
+      ...products,
+      {title: 'New Product', price: '0.00', description: 'New description', image: 'https://picsum.photos/200/150'},
+    ]);
+  const updateProduct = (index: number, field: string, value: string) => {
+    const newProducts = [...products];
+    // @ts-ignore
+    newProducts[index][field] = value;
+    setProducts(newProducts);
+  };
+
   const [primaryColor, setPrimaryColor] = useState<string>('#FFFFFF');
   const [secondaryColor, setSecondaryColor] = useState<string>('#E5E5E5');
   const [font, setFont] = useState<string>('Arial');
   const [textPrompt, setTextPrompt] = useState<string>('Generate a clean product display section');
   const [refinedPrompt, setRefinedPrompt] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
-  const router = useRouter();
 
   const handleGenerateCode = async () => {
     setIsLoading(true); // Start loading
     try {
       const result = await generateProductDisplay({
-        productImage: productImage || 'https://picsum.photos/400/300', // default image
+        productImage: carouselImages[0] || 'https://picsum.photos/400/300', // default image
         primaryColor,
         secondaryColor,
         font,
@@ -64,16 +101,59 @@ export default function Home() {
             <CardDescription>Enter the details for code generation</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <div className="flex flex-col gap-2">
-              <label htmlFor="productImage">Product Image URL</label>
-              <Input
-                type="text"
-                id="productImage"
-                placeholder="Enter image URL"
-                value={productImage}
-                onChange={(e) => setProductImage(e.target.value)}
-              />
+            {/* Hero Section Carousel Images */}
+            <div>
+              <label className="block text-sm font-medium leading-6 text-gray-900">Carousel Images</label>
+              {carouselImages.map((image, index) => (
+                <div key={index} className="mt-2 flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Image URL"
+                    value={image}
+                    onChange={(e) => updateCarouselImage(index, e.target.value)}
+                  />
+                </div>
+              ))}
+              <Button type="button" variant="secondary" onClick={addCarouselImage}>
+                Add Carousel Image
+              </Button>
             </div>
+
+            {/* Product List Details */}
+            <div>
+              <label className="block text-sm font-medium leading-6 text-gray-900">Product Details</label>
+              {products.map((product, index) => (
+                <div key={index} className="mt-2 grid grid-cols-1 gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Product Title"
+                    value={product.title}
+                    onChange={(e) => updateProduct(index, 'title', e.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Price"
+                    value={product.price}
+                    onChange={(e) => updateProduct(index, 'price', e.target.value)}
+                  />
+                  <Textarea
+                    placeholder="Description"
+                    value={product.description}
+                    onChange={(e) => updateProduct(index, 'description', e.target.value)}
+                  />
+                  <Input
+                    type="text"
+                    placeholder="Image URL"
+                    value={product.image}
+                    onChange={(e) => updateProduct(index, 'image', e.target.value)}
+                  />
+                </div>
+              ))}
+              <Button type="button" variant="secondary" onClick={addProduct}>
+                Add Product
+              </Button>
+            </div>
+
             <div className="flex flex-col gap-2">
               <label htmlFor="primaryColor">Primary Color</label>
               <Input
